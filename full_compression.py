@@ -52,7 +52,7 @@ image_q     = Quantizator(bins=6, type=1)
 flow_q      = Quantizator(bins=2, type=1)
 residual_q  = Quantizator(bins=6, type=1)
 
-image_autoencoder       = Network_AEC(name="Image", tensor_shape=(128,8,8), quantizator=image_q, network_path="C:/Users/jnpel/OneDrive/Diploma/Framework/networks/autoencoder_image_n.pth")
+image_autoencoder       = Network_AEC(name="Image", tensor_shape=(128,8,8), quantizator=image_q, network_path="C:/Users/jnpel/OneDrive/Diploma/Framework/networks/autoencoder_image_n2.pth")
 flow_autoencoder        = FlowCoder(name= "Flow", tensor_shape=(64,8,8), quantizator=flow_q, network_path="C:/Users/jnpel/OneDrive/Diploma/Framework/networks/autoencoder_flow_64_n.pth")
 residual_autoencoder    = ResidualCoder(name="Residual", tensor_shape=(64,8,8), quantizator=residual_q, network_path="C:/Users/jnpel/OneDrive/Diploma/Framework/networks/autoencoder_residual_64.pth")
 
@@ -66,7 +66,7 @@ subtract_operator = Subtract()
 add_operator = Add()
 
 # PIPELINE
-for frame_index in range(0,video_sample.frames):
+for frame_index in range(0,250):#video_sample.frames):
 
     current_frame._out = video_sample.GetFrame(frame_index)
 
@@ -110,6 +110,8 @@ for frame_index in range(0,video_sample.frames):
     current_frame.Show(1, "of")
     decoded_frame.Show(1, "df")
     
+    video_sample.SaveFrame(decoded_frame)
+    
     ssim = compare_ssim(current_frame._out, decoded_frame._out, multichannel=True)
     ssim_sum += ssim
 
@@ -118,7 +120,9 @@ for frame_index in range(0,video_sample.frames):
 ssim_score = ssim_sum/video_sample.frames
 print("\nAvg. SSIM = {:.3f}".format(ssim_score))
 
+video_sample.SaveVideo()
 if save:
+
     image_arith_coder.AvgFileSize()
     flow_arith_coder.AvgFileSize()
     residual_arith_coder.AvgFileSize()
